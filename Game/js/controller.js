@@ -17,9 +17,9 @@ var cmdP1 =
 };
 
 function preload() {
-    game.load.image('up', '../assets/ButtonUp.png');
-    game.load.image('down', '../assets/ButtonDown.png');
-    game.load.image('background', '../assets/bg.jpg');
+    game.load.image('up', '../Game/assets/ButtonUp.png');
+    game.load.image('down', '../Game/assets/ButtonDown.png');
+    game.load.image('background', '../Game/assets/bg.jpg');
 }
 
 function create() {

@@ -24,9 +24,13 @@ var clientResponse =
   cmd: null
 }
 
-app.use(express.static('Game'));
+app.use(express.static(__dirname));
 
 app.get('/', function(req, res){
+  res.sendfile(path.resolve(__dirname+'/index.html'));
+});
+
+app.get('/game', function(req, res){
   res.sendfile(path.resolve(__dirname+'/game.html'));
 });
 

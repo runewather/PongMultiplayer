@@ -21,34 +21,33 @@ var bola;
 var player1;
 var player2;
 var scoreText;
+var p1Score = 0;
+var p2Score = 0;
+var p1ScoreText;
+var p2ScoreText;
+var send = false;
+
+setInterval(function(){
+        send = true;  
+}, 1/40);
 
 //LOAD IMAGES
 function preload() {
-    game.load.image('mario', '../assets/mario.png');
-    game.load.image('bola', '../assets/Bola.png');
-    game.load.image('background', '../assets/background.png');
-    game.load.image('player1', '../assets/paleta.png');
-    game.load.image('player2', '../assets/paleta.png');
+    game.load.image('mario', '../Game/assets/mario.png');
+    game.load.image('bola', '../Game/assets/Bola.png');
+    game.load.image('background', '../Game/assets/background.png');
+    game.load.image('player1', '../Game/assets/paleta.png');
+    game.load.image('player2', '../Game/assets/paleta.png');
 }
 
 function create() {
-    //var txtPtsP1 = game.add.text(200, 80, "00", { font: "65px Adore64", fill: "#ffffff", align: "center" });
-    //var txtPtsP2 = game.add.text(600, 80, "00", { font: "65px Adore64", fill: "#ffffff", align: "center" });
-    var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true,  align: "center", backgroundColor: "#ffff00" };
-    
-    
-    //txtPtsP1.anchor.setTo(0.5, 0.5);
-    //txtPtsP2.anchor.setTo(0.5, 0.5);
-    
-    //txtPtsP1.setText("- You have clicked -\n times !");
-    
     game.physics.startSystem(Phaser.Physics.ARCADE);
     background = game.add.sprite(0, 0, 'background');
     bola = game.add.sprite(400, 250, 'bola');
     game.physics.enable(bola, Phaser.Physics.ARCADE);
     bola.body.collideWorldBounds = true;
-    bola.body.velocity.setTo(200,200);
-    bola.body.bounce.set(1.02);
+    bola.body.velocity.setTo(200,150);
+    bola.body.bounce.set(1.1);
     player1 = game.add.sprite(30, 200, 'player1');
     player2 = game.add.sprite(750, 200, 'player2');
     game.physics.enable(player1, Phaser.Physics.ARCADE);
@@ -66,6 +65,8 @@ function create() {
         player2.x = data.x2;
         player2.y = data.y2;
     });
+    p1ScoreText = game.add.text(200, 80, "0", { font: "65px Adore64", fill: "#ffffff", align: "center" });
+    p2ScoreText = game.add.text(600, 80, "0", { font: "65px Adore64", fill: "#ffffff", align: "center" });
 }
 
 function update() {
@@ -76,6 +77,25 @@ function update() {
     player1.x = serverData.x1;
     player2.y = serverData.y2;
     player2.x = serverData.x2;
+    
+    
+    if(bola.x >= 780 || bola.x == 0)
+    {
+        if(bola.x >= 780)
+        {
+            p1Score += 1;
+            p1ScoreText.setText(p1Score);
+        }
+        if(bola.x == 0)
+        {
+            p2Score += 1;
+            p2ScoreText.setText(p2Score);
+        }
+        bola.body.velocity.x = 200;
+        bola.body.velocity.y = 150;
+        bola.x = 400;
+        bola.y = 250;
+    }
     
     if (game.input.keyboard.isDown(Phaser.Keyboard.UP))
     {
@@ -98,9 +118,11 @@ function update() {
     {
          game.pause = true; 
     }
-    socket.emit('event', cmdP1); 
-    socket.emit('event', cmdP2); 
-    
+    if(send)
+    {
+        socket.emit('event', cmdP1); 
+        socket.emit('event', cmdP2); 
+    }
     cmdP1.cmd = null;
     cmdP2.cmd = null;
 }
